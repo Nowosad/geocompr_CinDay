@@ -18,6 +18,22 @@ output:
 options(htmltools.dir.version = FALSE)
 ```
 
+### Geocomputation
+
+<!-- intro to GIS software -->
+
+```{r gdsl, echo=FALSE, message=FALSE, results="asis"}
+d = readr::read_csv("figs/gis-vs-gds-table.csv")
+knitr::kable(x = d, caption = "Differences in emphasis between the fields of Geographic Information Systems (GIS) and Geocomputation", format = "html")
+```
+
+<!-- Geographic data consists of xy-coordinates and corresponding attributes (this might include a time stamp, otherwise the data is static). -->
+<!-- Usually we neglect the curvature of the Earth when visualizing geographic data. -->
+<!-- Geographic data only represents a simplified representation of the world. So we decide what we display for which purpose. -->
+<!-- Geographic data can quickly become big. -->
+<!-- Two data models for representing digitally geographic data: the vector and the raster data model -->
+
+---
 ### Spatial R
 
 - Spatial packages already available in the S language since the 1990s (Bivand and Gebhardt, 2000)
@@ -39,19 +55,6 @@ Further reading: [https://geocompr.robinlovelace.net/intro.html#the-history-of-r
 - There are many ways to visualize spatial data in R, such as the **ggplot2**, **rasterVis**, **tmap**, **leaflet**, and **mapview** packages
 - It is easy to connect R with a GIS software - GRASS GIS (**rgrass7**), SAGA (**RSAGA**), QGIS (**RQGIS** and **qgisremote**), and ArcGIS (**arcgisbinding**)
 
----
-### Geocomputation
-
-```{r gdsl, echo=FALSE, message=FALSE, results="asis"}
-d = readr::read_csv("figs/gis-vs-gds-table.csv")
-knitr::kable(x = d, caption = "Differences in emphasis between the fields of Geographic Information Systems (GIS) and Geographic Data Science (GDS)", format = "html")
-```
-
-<!-- Geographic data consists of xy-coordinates and corresponding attributes (this might include a time stamp, otherwise the data is static). -->
-<!-- Usually we neglect the curvature of the Earth when visualizing geographic data. -->
-<!-- Geographic data only represents a simplified representation of the world. So we decide what we display for which purpose. -->
-<!-- Geographic data can quickly become big. -->
-<!-- Two data models for representing digitally geographic data: the vector and the raster data model -->
 
 ---
 ### The **sf** package
