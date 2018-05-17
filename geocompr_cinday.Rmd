@@ -20,11 +20,64 @@ options(htmltools.dir.version = FALSE)
 
 ### Spatial R
 
+- Spatial packages already available in the S language since the 1990s (Bivand and Gebhardt, 2000)
+- By 2000, modifications of these became R packages for point pattern analysis, geostatistics, exploratory - spatial data analysis and spatial econometrics
+- R-GIS bridges (Bivand, 2000)
+- Bivand (2003) proposed a spatial data class system for R which eventually led to the packages **rgdal** (first released in 2003; Bivand, Keitt, and Rowlingson, 2018) and sp (first released in 2005; Bivand, Pebesma, and Gomez-Rubio, 2013)
+- 2008: *Applied Spatial Data Analysis with R* (Bivand, Pebesma, and Gomez-Rubio, 2013)
+- 2010: **raster** package (Hijmans, 2017)
+- 2011: **rgeos** package (Bivand and Rundel, 2017)
+- 2016-17: **sf** - simple features for R (Pebesma, 2018a)
+- 2017-18: **stars** - spatiotemporal tidy arrays for R (Pebesma, 2018b) 
+
+
+Further reading: [https://geocompr.robinlovelace.net/intro.html#the-history-of-r-spatial](https://geocompr.robinlovelace.net/intro.html#the-history-of-r-spatial)
+
+
+- **sf** and **sp** are the most important R packages to handle vector data; **sf** is a successor of **sp** but its still evolving. Moreover, many other R packages depend on the functions and classes for the **sp** package
+- **raster** is an extension of spatial data classes to work with rasters
+- There are many ways to visualize spatial data in R, such as the **ggplot2**, **rasterVis**, **tmap**, **leaflet**, and **mapview** packages
+- It is easy to connect R with a GIS software - GRASS GIS (**rgrass7**), SAGA (**RSAGA**), QGIS (**RQGIS** and **qgisremote**), and ArcGIS (**arcgisbinding**)
+
 ---
 ### Geocomputation
 
+```{r gdsl, echo=FALSE, message=FALSE, results="asis"}
+d = readr::read_csv("figs/gis-vs-gds-table.csv")
+knitr::kable(x = d, caption = "Differences in emphasis between the fields of Geographic Information Systems (GIS) and Geographic Data Science (GDS)", format = "html")
+```
+
+<!-- Geographic data consists of xy-coordinates and corresponding attributes (this might include a time stamp, otherwise the data is static). -->
+<!-- Usually we neglect the curvature of the Earth when visualizing geographic data. -->
+<!-- Geographic data only represents a simplified representation of the world. So we decide what we display for which purpose. -->
+<!-- Geographic data can quickly become big. -->
+<!-- Two data models for representing digitally geographic data: the vector and the raster data model -->
+
 ---
 ### The **sf** package
+
+The **sf** package in an R implementation of [Simple Features](https://en.wikipedia.org/wiki/Simple_Features). This package incorporates:
+- A new spatial data class system in R
+- Functions for reading and writing data
+- Tools for spatial operations on vectors
+
+Most of the functions in this package starts with prefix `st_`.
+
+```{r, eval=FALSE}
+devtools::install_github("edzer/sfr") # development version
+```
+
+or
+
+```{r, eval=FALSE}
+install.packages("sf") # stable version
+```
+
+You need a recent version of the GDAL, GEOS, Proj.4, and UDUNITS libraries installed for this to work on Mac and Linux. More information on that at https://github.com/edzer/sfr.
+
+```{r, message=FALSE}
+library(sf)
+```
 
 <!-- read shapefile + plot -->
 
@@ -51,6 +104,8 @@ options(htmltools.dir.version = FALSE)
 ---
 ### Plots
 
+<!-- mapviews -->
+
 ---
 ### Conclusions
 
@@ -65,9 +120,9 @@ We encourage contributions on any part of the book, including:
 
 - Improvements to the text, e.g. clarifying unclear sentences, fixing typos (see guidance from [Yihui Xie](https://yihui.name/en/2013/06/fix-typo-in-documentation/))
 - Changes to the code, e.g. to do things in a more efficient way
-- Suggestions on content (see the projects [issue tracker](https://github.com/Robinlovelace/geocompr/issues) and the [work-in-progress](https://github.com/Robinlovelace/geocompr/tree/master/work-in-progress) folder for chapters in the pipeline)
+- Suggestions on content (see the projects [issue tracker](https://github.com/Robinlovelace/geocompr/issues)
 
-Please see [our_style.md](https://github.com/Robinlovelace/geocompr/blob/master/our_style.md) for the books style.
+Please see [our-style.md](https://github.com/Robinlovelace/geocompr/blob/master/our-style.md) for the book's style.
 
 ---
 class: middle
