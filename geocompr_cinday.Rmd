@@ -2,7 +2,7 @@
 title: "Introduction to geocomputation with R"
 subtitle: "`r icon::ii('android-globe')`"
 author: "Jakub Nowosad <br/> (https://nowosad.github.io)"
-date: "CinDay RUG, Cincinnati, 2018-05-22"
+date: "CinDay RUG, 2018-05-22"
 output:
   xaringan::moon_reader:
           css: ["default", "style.css"]
