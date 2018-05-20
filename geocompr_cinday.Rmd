@@ -20,11 +20,13 @@ options(htmltools.dir.version = FALSE)
 
 ### Geocomputation
 
+- what's gis
 <!-- intro to GIS software -->
+<!-- Geographic Information Systems (GIS) -->
 
 ```{r gdsl, echo=FALSE, message=FALSE, results="asis"}
 d = readr::read_csv("figs/gis-vs-gds-table.csv")
-knitr::kable(x = d, caption = "Differences in emphasis between the fields of Geographic Information Systems (GIS) and Geocomputation", format = "html")
+knitr::kable(x = d, caption = "Differences in emphasis between the fields of GIS and Geocomputation", format = "html")
 ```
 
 <!-- Geographic data consists of xy-coordinates and corresponding attributes (this might include a time stamp, otherwise the data is static). -->
@@ -46,9 +48,13 @@ knitr::kable(x = d, caption = "Differences in emphasis between the fields of Geo
 - 2016-17: **sf** - simple features for R (Pebesma, 2018a)
 - 2017-18: **stars** - spatiotemporal tidy arrays for R (Pebesma, 2018b) 
 
-
 Further reading: [https://geocompr.robinlovelace.net/intro.html#the-history-of-r-spatial](https://geocompr.robinlovelace.net/intro.html#the-history-of-r-spatial)
 
+---
+### Spatial R
+
+<!-- - fig raster/vector -->
+<!-- I would focus on vectors -->
 
 - **sf** and **sp** are the most important R packages to handle vector data; **sf** is a successor of **sp** but its still evolving. Moreover, many other R packages depend on the functions and classes for the **sp** package
 - **raster** is an extension of spatial data classes to work with rasters
@@ -67,7 +73,7 @@ The **sf** package in an R implementation of [Simple Features](https://en.wikipe
 Most of the functions in this package starts with prefix `st_`.
 
 ```{r, eval=FALSE}
-devtools::install_github("edzer/sfr") # development version
+devtools::install_github("r-spatial/sf") # development version
 ```
 
 or
@@ -76,7 +82,7 @@ or
 install.packages("sf") # stable version
 ```
 
-You need a recent version of the GDAL, GEOS, Proj.4, and UDUNITS libraries installed for this to work on Mac and Linux. More information on that at https://github.com/edzer/sfr.
+You need a recent version of the GDAL, GEOS, Proj.4, and UDUNITS libraries installed for this to work on Mac and Linux. More information on that at https://github.com/r-spatial/sf.
 
 ```{r, message=FALSE}
 library(sf)
@@ -85,32 +91,119 @@ library(sf)
 <!-- read shapefile + plot -->
 
 ---
-### ...
+### How to put this data on the map?
 
+```{r, eval=FALSE, echo=FALSE}
+library(tibble)
+library(readr)
+breweries = c("Listermann Brewing Company",
+              "Rhinegeist Brewery",
+              "The Woodburn Brewery",
+              "Urban Artifact")
+no_beer = c(999, 5155, 3111, 710)
+revenue = c(7986, 4651, 5156, 8847)
+profit = c(513, 651, 879, 634)
+
+my_df = data_frame(brewery = breweries, no_of_beers = no_beer, 
+                   revenue = revenue, profit = profit)
+write_csv(my_df, "breweries.csv")
+```
+
+```{r, message=FALSE}
+library(readr)
+my_df = read_csv("breweries.csv")
+```
+
+```{r, echo=FALSE, results='asis'}
+knitr::kable(my_df, format = "html")
+```
+
+> Note: All the data presented (except the names) are artificial!
+
+---
+### Spatial data
+
+<!-- usually - spatial files -->
+<!-- complex data - polygons (areas), lines, or points -->
 <!-- input pairs of coordinates (non-wgs 84 coords) -->
+
+```{r, echo=FALSE, eval=FALSE}
+breweries = c("Listermann Brewing Company",
+              "Rhinegeist Brewery",
+              "The Woodburn Brewery",
+              "Urban Artifact")
+breweries_df1 = data_frame(name = breweries[1:2],
+                    x = c(1331125, 1327662), 
+                    y = c(-525580, -529531.6))
+breweries_sf1 = st_as_sf(breweries_df1, coords = c("x", "y"), crs = 2163)
+st_write(breweries_sf1, "breweries_sf1.gpkg")
+```
+
+```{r}
+breweries_sf1 = st_read("breweries_sf1.gpkg", quiet = TRUE)
+breweries_sf1
+```
 
 ---
 ### Geocoding 
 
-<!-- wgs84 -->
+<!-- the simples, but not the only way - ggmap -->
+
+```{r geocode, cache=TRUE, message=FALSE}
+library(tibble)
+library(ggmap)
+
+breweries_df2 = data_frame(name = c("The Woodburn Brewery",
+                                    "Urban Artifact"))
+breweries_df2 = mutate_geocode(breweries_df2, name)
+breweries_sf2 = st_as_sf(breweries_df2,
+                         coords = c("lon", "lat"), crs = 4326)
+breweries_sf2
+```
+
+<!-- add open cage -->
 
 ---
 ### ...
 
-<!-- miss matches (coords) -->
+```{r}
+breweries_sf1 = st_transform(breweries_sf1,
+                             crs = st_crs(breweries_sf2))
+```
+
+```{r}
+breweries_sf1 = dplyr::rename(breweries_sf1, geometry = geom)
+```
+
+```{r}
+breweries_sf = rbind(breweries_sf1, breweries_sf2)
+breweries_sf
+```
 
 ---
 ### Data join
 
-<!-- left join beer sales? -->
+```{r, message=FALSE, warning=FALSE}
+library(dplyr)
+my_breweries = left_join(breweries_sf, my_df, by = c("name" = "brewery"))
+my_breweries
+```
 
 ---
 ### Plots
 
 <!-- mapviews -->
 
+```{r}
+library(mapview)
+mapview(my_breweries)
+```
+
 ---
-### Conclusions
+### Plots
+
+<!-- mention tmap -->
+<!-- ggplot2 -->
 
 ---
 class: middle
