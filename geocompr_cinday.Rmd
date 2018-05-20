@@ -20,57 +20,63 @@ options(htmltools.dir.version = FALSE)
 
 ### Geocomputation
 
-- what's gis
-<!-- intro to GIS software -->
-<!-- Geographic Information Systems (GIS) -->
+- **GIS** - A **G**eographic **I**nformation **S**ystem - analysis, manipulation and visualization of geographical data (Longley, Goodchild, Maguire, and Rhind, 2015)
+- GIS software - GRASS GIS, SAGA GIS, QGIS, ArcGIS (commercial)
 
 ```{r gdsl, echo=FALSE, message=FALSE, results="asis"}
 d = readr::read_csv("figs/gis-vs-gds-table.csv")
-knitr::kable(x = d, caption = "Differences in emphasis between the fields of GIS and Geocomputation", format = "html")
+knitr::kable(x = d, format = "html")
 ```
 
-<!-- Geographic data consists of xy-coordinates and corresponding attributes (this might include a time stamp, otherwise the data is static). -->
-<!-- Usually we neglect the curvature of the Earth when visualizing geographic data. -->
-<!-- Geographic data only represents a simplified representation of the world. So we decide what we display for which purpose. -->
-<!-- Geographic data can quickly become big. -->
-<!-- Two data models for representing digitally geographic data: the vector and the raster data model -->
+- Geographic data is represented by **spatial coordinates**
+- There are many **Coordinate Reference Systems (CRS)**, which defines how the spatial elements of the data relate to the surface of the Earth (or other bodies)
+- There are two main models for representing geographic data - the **vector** and the **raster** data model
 
 ---
-### Spatial R
+### Spatial R history
 
 - Spatial packages already available in the S language since the 1990s (Bivand and Gebhardt, 2000)
 - By 2000, modifications of these became R packages for point pattern analysis, geostatistics, exploratory - spatial data analysis and spatial econometrics
 - R-GIS bridges (Bivand, 2000)
-- Bivand (2003) proposed a spatial data class system for R which eventually led to the packages **rgdal** (first released in 2003; Bivand, Keitt, and Rowlingson, 2018) and sp (first released in 2005; Bivand, Pebesma, and Gomez-Rubio, 2013)
+- Bivand (2003) proposed a spatial data class system for R which eventually led to the packages **rgdal** (first released in 2003; Bivand, Keitt, and Rowlingson, 2018) and **sp** (first released in 2005; Bivand, Pebesma, and Gomez-Rubio, 2013)
 - 2008: *Applied Spatial Data Analysis with R* (Bivand, Pebesma, and Gomez-Rubio, 2013)
 - 2010: **raster** package (Hijmans, 2017)
 - 2011: **rgeos** package (Bivand and Rundel, 2017)
 - 2016-17: **sf** - simple features for R (Pebesma, 2018a)
 - 2017-18: **stars** - spatiotemporal tidy arrays for R (Pebesma, 2018b) 
 
-Further reading: [https://geocompr.robinlovelace.net/intro.html#the-history-of-r-spatial](https://geocompr.robinlovelace.net/intro.html#the-history-of-r-spatial)
-
 ---
 ### Spatial R
 
-<!-- - fig raster/vector -->
-<!-- I would focus on vectors -->
+```{r, echo=FALSE, message=FALSE, fig.width=11, fig.height=4}
+library(raster)
+library(sf)
+library(spData)
+library(tmap)
+
+p1 = tm_shape(lnd) +
+        tm_polygons("NAME", legend.show = FALSE) +
+        tm_layout(title = "Vector")
+p2 = tm_shape(elev) +
+        tm_raster("layer", legend.show = FALSE, n = 36)  +
+        tm_layout(title = "Raster")
+tmap_arrange(p1, p2, ncol = 2)
+```
 
 - **sf** and **sp** are the most important R packages to handle vector data; **sf** is a successor of **sp** but its still evolving. Moreover, many other R packages depend on the functions and classes for the **sp** package
 - **raster** is an extension of spatial data classes to work with rasters
-- There are many ways to visualize spatial data in R, such as the **ggplot2**, **rasterVis**, **tmap**, **leaflet**, and **mapview** packages
-- It is easy to connect R with a GIS software - GRASS GIS (**rgrass7**), SAGA (**RSAGA**), QGIS (**RQGIS** and **qgisremote**), and ArcGIS (**arcgisbinding**)
+- It is also easy to connect R with a GIS software - GRASS GIS (**rgrass7**), SAGA GIS (**RSAGA**), QGIS (**RQGIS** and **qgisremote**), and ArcGIS (**arcgisbinding**)
 
 
 ---
 ### The **sf** package
 
 The **sf** package in an R implementation of [Simple Features](https://en.wikipedia.org/wiki/Simple_Features). This package incorporates:
-- A new spatial data class system in R
+- A relatively new spatial data class system in R
 - Functions for reading and writing data
 - Tools for spatial operations on vectors
 
-Most of the functions in this package starts with prefix `st_`.
+Most of the functions in this package start with a prefix `st_`.
 
 ```{r, eval=FALSE}
 devtools::install_github("r-spatial/sf") # development version
@@ -84,14 +90,12 @@ install.packages("sf") # stable version
 
 You need a recent version of the GDAL, GEOS, Proj.4, and UDUNITS libraries installed for this to work on Mac and Linux. More information on that at https://github.com/r-spatial/sf.
 
-```{r, message=FALSE}
-library(sf)
-```
-
-<!-- read shapefile + plot -->
-
 ---
 ### How to put this data on the map?
+
+- I've got some non-spatial data
+- How can I **add spatial information to my data**?
+- How to visualize my locations on a map?
 
 ```{r, eval=FALSE, echo=FALSE}
 library(tibble)
@@ -118,14 +122,13 @@ my_df = read_csv("breweries.csv")
 knitr::kable(my_df, format = "html")
 ```
 
-> Note: All the data presented (except the names) are artificial!
+> Note: All the data presented here (except the names) are artificial!
 
 ---
 ### Spatial data
 
-<!-- usually - spatial files -->
-<!-- complex data - polygons (areas), lines, or points -->
-<!-- input pairs of coordinates (non-wgs 84 coords) -->
+- Usually, spatial files are stored in special data formats, such as ESRI Shapefile (.shp) or **GeoPackage (.gpkg)**
+- Vector data can be represented by areas (**polygons**), **lines**, or **points**
 
 ```{r, echo=FALSE, eval=FALSE}
 breweries = c("Listermann Brewing Company",
@@ -139,41 +142,53 @@ breweries_sf1 = st_as_sf(breweries_df1, coords = c("x", "y"), crs = 2163)
 st_write(breweries_sf1, "breweries_sf1.gpkg")
 ```
 
-```{r}
+```{r, message=FALSE}
+library(sf)
 breweries_sf1 = st_read("breweries_sf1.gpkg", quiet = TRUE)
 breweries_sf1
 ```
 
 ---
-### Geocoding 
+### Geocode
 
-<!-- the simples, but not the only way - ggmap -->
+- Only two of my locations exist in my spatial file
+- How can I get coordinates of my missing breweries? 
+- The answer is **geocoding** - converting names/addresses into spatial coordinates
 
-```{r geocode, cache=TRUE, message=FALSE}
+```{r geocode, cache=FALSE, message=FALSE}
 library(tibble)
 library(ggmap)
-
 breweries_df2 = data_frame(name = c("The Woodburn Brewery",
                                     "Urban Artifact"))
 breweries_df2 = mutate_geocode(breweries_df2, name)
+breweries_df2
+```
+
+- Also try the **opencage** package - https://github.com/ropensci/opencage 
+
+
+---
+### Convert to spatial object
+
+```{r}
+breweries_df2
 breweries_sf2 = st_as_sf(breweries_df2,
                          coords = c("lon", "lat"), crs = 4326)
 breweries_sf2
 ```
 
-<!-- add open cage -->
-
 ---
-### ...
+### Unify and combine
+
+- Transform to the same spatial projection (`st_transform`) and unify the columns names (`rename`):
 
 ```{r}
 breweries_sf1 = st_transform(breweries_sf1,
                              crs = st_crs(breweries_sf2))
-```
-
-```{r}
 breweries_sf1 = dplyr::rename(breweries_sf1, geometry = geom)
 ```
+
+- Bind the spatial datasets (`rbind`):
 
 ```{r}
 breweries_sf = rbind(breweries_sf1, breweries_sf2)
@@ -181,29 +196,26 @@ breweries_sf
 ```
 
 ---
-### Data join
+### Join
+
+- Join the spatial and non-spatial datasets:
 
 ```{r, message=FALSE, warning=FALSE}
 library(dplyr)
-my_breweries = left_join(breweries_sf, my_df, by = c("name" = "brewery"))
+my_breweries = left_join(breweries_sf, my_df, 
+                         by = c("name" = "brewery"))
 my_breweries
 ```
 
 ---
-### Plots
+### Plot
 
-<!-- mapviews -->
+- There are several ways to visualize spatial data in R - as a static map (*plot()*, **ggplot2**, **tmap**) and interactive one (**leaflet**, **mapview**, **tmap**)
 
-```{r}
+```{r, fig.width=11, fig.height=5}
 library(mapview)
 mapview(my_breweries)
 ```
-
----
-### Plots
-
-<!-- mention tmap -->
-<!-- ggplot2 -->
 
 ---
 class: middle

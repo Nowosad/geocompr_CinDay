@@ -1,0 +1,11 @@
+base
+sf
+readr
+tibble
+ggplot2
+ggmap
+bindrcpp
+sp
+raster
+spData
+tmap
