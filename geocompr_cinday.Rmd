@@ -42,6 +42,7 @@ knitr::kable(x = d, format = "html")
 - 2008: *Applied Spatial Data Analysis with R* (Bivand, Pebesma, and Gomez-Rubio, 2013)
 - 2010: **raster** package (Hijmans, 2017)
 - 2011: **rgeos** package (Bivand and Rundel, 2017)
+- 2014-15: Spatial visualization - **tmap** (Tennekes, 2018), **rasterVis** (Lamigueiro, 2014), **leaflet** (Cheng, Karambelkar, and Xie, 2018)
 - 2016-17: **sf** - simple features for R (Pebesma, 2018a)
 - 2017-18: **stars** - spatiotemporal tidy arrays for R (Pebesma, 2018b) 
 
@@ -161,7 +162,6 @@ library(ggmap)
 breweries_df2 = data_frame(name = c("The Woodburn Brewery",
                                     "Urban Artifact"))
 breweries_df2 = mutate_geocode(breweries_df2, name)
-breweries_df2
 ```
 
 ```{r, echo=FALSE, message=FALSE}
@@ -169,6 +169,9 @@ breweries_df2
 breweries_df2 = readr::read_csv("breweries_coords.csv")
 ```
 
+```{r}
+breweries_df2
+```
 
 - Also try the **opencage** package - https://github.com/ropensci/opencage 
 
