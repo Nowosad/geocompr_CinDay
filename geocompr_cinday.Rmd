@@ -48,7 +48,7 @@ knitr::kable(x = d, format = "html")
 ---
 ### Spatial R
 
-```{r, echo=FALSE, message=FALSE, fig.width=11, fig.height=4}
+```{r, echo=FALSE, message=FALSE, fig.width=11, fig.height=4, warning=FALSE}
 library(raster)
 library(sf)
 library(spData)
