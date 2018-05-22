@@ -155,7 +155,7 @@ breweries_sf1
 - How can I get coordinates of my missing breweries? 
 - The answer is **geocoding** - converting names/addresses into spatial coordinates
 
-```{r geocode, cache=FALSE, message=FALSE}
+```{r geocode, cache=FALSE, message=FALSE, eval=FALSE}
 library(tibble)
 library(ggmap)
 breweries_df2 = data_frame(name = c("The Woodburn Brewery",
@@ -163,6 +163,12 @@ breweries_df2 = data_frame(name = c("The Woodburn Brewery",
 breweries_df2 = mutate_geocode(breweries_df2, name)
 breweries_df2
 ```
+
+```{r, echo=FALSE, message=FALSE}
+# readr::write_csv(breweries_df2, "breweries_coords.csv")
+breweries_df2 = readr::read_csv("breweries_coords.csv")
+```
+
 
 - Also try the **opencage** package - https://github.com/ropensci/opencage 
 
